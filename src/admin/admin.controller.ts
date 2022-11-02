@@ -9,22 +9,44 @@ import {
   Put,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
+import { EncryptionService } from '../core/providers/encryption.service';
 
 @Controller('admin')
 export class AdminController {
-  constructor(private service: AdminService) {}
+  constructor(
+    private service: AdminService,
+    private encryption: EncryptionService,
+  ) {}
 
   @Post('create')
-  private async CreateAdmin(@Body() body: dto.CreateAdminDto) {
-    const id = await this.service.Create(body.username, body.password);
+  public async CreateAdmin(@Body() body: dto.CreateAdminDto) {
+    const hashedPassowrd = await this.encryption.PasswordEncryption(
+      body.password,
+    );
+    const id = await this.service.Create(body.username, hashedPassowrd);
     return {
       message: 'created',
       payload: id,
     };
   }
 
+  @Post('validate')
+  public async ValidateAdmin(@Body() body: dto.VlidateDto) {
+    const user = await this.service.FindByUsername(body.username);
+    const hashedPassowrd = await this.encryption.Compare(
+      body.password,
+      user.password,
+    );
+
+    // const id = await this.service.Create(body.username, hashedPassowrd);
+    return {
+      message: 'created',
+      payload: hashedPassowrd,
+    };
+  }
+
   @Delete('remove/:id')
-  private async DeleteUser(@Param('id') id: string) {
+  public async DeleteUser(@Param('id') id: string) {
     const response = await this.service.Delete(id);
     return {
       message: 'deleted',
@@ -33,7 +55,7 @@ export class AdminController {
   }
 
   @Put('update')
-  private async UpdateUser(@Body() body: dto.UpdateAdminDto) {
+  public async UpdateUser(@Body() body: dto.UpdateAdminDto) {
     const response = await this.service.UpdateUser(body.id, body.updateFields);
     return {
       payload: response,
@@ -41,7 +63,7 @@ export class AdminController {
   }
 
   @Get('id/:id')
-  private async FindAdminById(@Param('id') id: string) {
+  public async FindAdminById(@Param('id') id: string) {
     const response = await this.service.FindById(id);
     return {
       payload: response,
@@ -49,7 +71,7 @@ export class AdminController {
   }
 
   @Get('username/:username')
-  private async FindByUsername(@Param('username') username: string) {
+  public async FindByUsername(@Param('username') username: string) {
     const response = await this.service.FindByUsername(username);
     return {
       payload: response,
@@ -57,7 +79,7 @@ export class AdminController {
   }
 
   @Get('')
-  private async FindAll() {
+  public async FindAll() {
     const response = await this.service.FindAll();
     return {
       payload: response,
