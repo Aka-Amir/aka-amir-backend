@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TicketsModule } from './tickets/tickets.module';
+import { AppController } from './app.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { BlogPostsModule } from './blog-posts/blog-posts.module';
-import { SkillsModule } from './skills/skills.module';
-import { SiteDataModule } from './site-data/site-data.module';
 import { AdminModule } from './admin/admin.module';
+import { SkillsModule } from './skills/skills.module';
+import { TicketsModule } from './tickets/tickets.module';
+import { SiteDataModule } from './site-data/site-data.module';
+import { CustomersModule } from './customers/customers.module';
+import { BlogPostsModule } from './blog-posts/blog-posts.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AdminModule } from './admin/admin.module';
     SkillsModule,
     SiteDataModule,
     AdminModule,
+    CustomersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
