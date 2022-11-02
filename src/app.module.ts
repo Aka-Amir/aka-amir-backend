@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { BlogPostsModule } from './blog-posts/blog-posts.module';
 import { SkillsModule } from './skills/skills.module';
 import { SiteDataModule } from './site-data/site-data.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { SiteDataModule } from './site-data/site-data.module';
     BlogPostsModule,
     SkillsModule,
     SiteDataModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
