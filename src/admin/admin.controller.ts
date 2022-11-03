@@ -1,3 +1,5 @@
+import { Admin } from './../core/types/Admin.type';
+import { AuthService } from './../core/providers/auth.service';
 import * as dto from './DTO';
 import {
   Body,
@@ -7,6 +9,7 @@ import {
   Param,
   Post,
   Put,
+  ForbiddenException,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { EncryptionService } from '../core/providers/encryption.service';
@@ -16,32 +19,55 @@ export class AdminController {
   constructor(
     private service: AdminService,
     private encryption: EncryptionService,
+    private auth: AuthService<Admin>,
   ) {}
 
-  @Post('create')
+  @Post('register')
   public async CreateAdmin(@Body() body: dto.CreateAdminDto) {
     const hashedPassowrd = await this.encryption.PasswordEncryption(
       body.password,
     );
     const id = await this.service.Create(body.username, hashedPassowrd);
+    const payload: Admin = {
+      id,
+      username: body.username,
+    };
+    const token = await this.auth.GetToken(payload);
+    const refresh = await this.auth.GetRefresh(payload);
+
     return {
       message: 'created',
-      payload: id,
+      payload: {
+        token,
+        refresh,
+        id,
+      },
     };
   }
 
-  @Post('validate')
+  @Post('login')
   public async ValidateAdmin(@Body() body: dto.VlidateDto) {
     const user = await this.service.FindByUsername(body.username);
-    const hashedPassowrd = await this.encryption.Compare(
-      body.password,
-      user.password,
-    );
+    const isSame = await this.encryption.Compare(body.password, user.password);
 
-    // const id = await this.service.Create(body.username, hashedPassowrd);
+    if (!isSame) {
+      throw new ForbiddenException();
+    }
+
+    const payload: Admin = {
+      id: user._id?.toString(),
+      username: user.username,
+    };
+
+    const token = await this.auth.GetToken(payload);
+    const refresh = await this.auth.GetRefresh(payload);
+
     return {
-      message: 'created',
-      payload: hashedPassowrd,
+      message: 'LoggedIn',
+      payload: {
+        token,
+        refresh,
+      },
     };
   }
 

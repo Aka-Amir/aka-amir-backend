@@ -35,16 +35,16 @@ describe('AdminController', () => {
     expect(service).toBeDefined();
   });
 
-  // it('Should create admin', async () => {
-  //   await expect(
-  //     controller.CreateAdmin({
-  //       password: '12345',
-  //       username: 'amir2',
-  //     }),
-  //   ).resolves.toMatchObject({
-  //     message: 'created',
-  //   });
-  // });
+  it('Should create admin', async () => {
+    await expect(
+      controller.CreateAdmin({
+        password: '12345',
+        username: 'amir2',
+      }),
+    ).resolves.toMatchObject({
+      message: 'created',
+    });
+  });
 
   it('Should validate admin', async () => {
     await expect(
