@@ -10,7 +10,6 @@ import {
   Post,
   Put,
   ForbiddenException,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
