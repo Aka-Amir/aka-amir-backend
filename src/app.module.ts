@@ -8,7 +8,6 @@ import { TicketsModule } from './tickets/tickets.module';
 import { SiteDataModule } from './site-data/site-data.module';
 import { CustomersModule } from './customers/customers.module';
 import { BlogPostsModule } from './blog-posts/blog-posts.module';
-import { CoreModule } from './core/core.module';
 
 @Module({
   imports: [
@@ -19,7 +18,6 @@ import { CoreModule } from './core/core.module';
     SiteDataModule,
     AdminModule,
     CustomersModule,
-    CoreModule,
   ],
   controllers: [AppController],
   providers: [AppService],

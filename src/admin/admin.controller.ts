@@ -10,9 +10,13 @@ import {
   Post,
   Put,
   ForbiddenException,
+  UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { EncryptionService } from '../core/providers/encryption.service';
+import { AuthGuard } from '../core/guards/auth.guard';
+import { TokenData } from 'src/core/decorators/token-data-param.decorator';
 
 @Controller('admin')
 export class AdminController {
@@ -71,7 +75,20 @@ export class AdminController {
     };
   }
 
+  @Get('new_token')
+  @UseGuards(AuthGuard<Admin>)
+  public async RefreshToken(@TokenData() admin: Admin) {
+    const response = await this.service.FindById(admin.id);
+    if (!response) throw new ForbiddenException();
+    const token = await this.auth.GetToken(admin);
+    return {
+      message: 'new token',
+      payload: token,
+    };
+  }
+
   @Delete('remove/:id')
+  @UseGuards(AuthGuard<Admin>)
   public async DeleteUser(@Param('id') id: string) {
     const response = await this.service.Delete(id);
     return {
@@ -81,6 +98,7 @@ export class AdminController {
   }
 
   @Put('update')
+  @UseGuards(AuthGuard<Admin>)
   public async UpdateUser(@Body() body: dto.UpdateAdminDto) {
     const response = await this.service.UpdateUser(body.id, body.updateFields);
     return {
@@ -89,6 +107,7 @@ export class AdminController {
   }
 
   @Get('id/:id')
+  @UseGuards(AuthGuard<Admin>)
   public async FindAdminById(@Param('id') id: string) {
     const response = await this.service.FindById(id);
     return {
@@ -97,6 +116,7 @@ export class AdminController {
   }
 
   @Get('username/:username')
+  @UseGuards(AuthGuard<Admin>)
   public async FindByUsername(@Param('username') username: string) {
     const response = await this.service.FindByUsername(username);
     return {
@@ -105,6 +125,7 @@ export class AdminController {
   }
 
   @Get('')
+  @UseGuards(AuthGuard<Admin>)
   public async FindAll() {
     const response = await this.service.FindAll();
     return {

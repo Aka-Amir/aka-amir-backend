@@ -25,7 +25,7 @@ export class AdminService {
   }
 
   async FindById(id: string): Promise<AdminsDocument> {
-    return this.model.findOne({ _id: id }, { __v: 0 }).exec();
+    return this.model.findById(id, { __v: 0 }).exec();
   }
 
   async FindByUsername(username: string): Promise<AdminsDocument> {

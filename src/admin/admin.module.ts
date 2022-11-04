@@ -1,3 +1,4 @@
+import { CoreModule } from './../core/core.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AdminController } from './admin.controller';
@@ -12,6 +13,7 @@ import { AdminsSchema, collectionName } from './schemas/admins.schema';
         schema: AdminsSchema,
       },
     ]),
+    CoreModule,
   ],
   controllers: [AdminController],
   providers: [AdminService],
