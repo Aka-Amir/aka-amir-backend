@@ -1,25 +1,26 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { TileData } from './tile.data';
 
 @Schema()
 export class SiteData {
   @Prop({
-    type: String,
+    type: Number,
     unique: true,
   })
-  sectionId: string;
+  sectionIndex: number;
 
   @Prop({
     type: String,
     required: true,
   })
-  pageUrl: string;
+  pageId: string;
 
   @Prop({
     type: String,
     required: false,
   })
-  icon: string;
+  icon?: string;
 
   @Prop({
     type: String,
@@ -29,9 +30,21 @@ export class SiteData {
 
   @Prop({
     type: String,
-    required: true,
+    required: false,
   })
-  content: string;
+  html?: string;
+
+  @Prop({
+    type: Array<TileData>,
+    required: false,
+  })
+  tiles?: Array<TileData>;
+
+  @Prop({
+    type: Date,
+    default: Date.now,
+  })
+  date: Date;
 }
 
 export const collectionName = 'col_site_data';
