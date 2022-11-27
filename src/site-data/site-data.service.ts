@@ -34,13 +34,17 @@ export class SiteDataService {
   }
 
   public async Update(id: string, updatingData: SiteData) {
-    this.db.updateOne(
-      {
-        _id: id,
-      },
-      {
-        $set: updatingData,
-      },
-    );
+    const response = await this.db
+      .updateOne(
+        {
+          _id: id,
+        },
+        {
+          $set: updatingData,
+        },
+      )
+      .exec();
+
+    return response.matchedCount != 0;
   }
 }
