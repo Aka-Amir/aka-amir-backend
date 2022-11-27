@@ -8,6 +8,8 @@ import { TicketsModule } from './tickets/tickets.module';
 import { SiteDataModule } from './site-data/site-data.module';
 import { CustomersModule } from './customers/customers.module';
 import { BlogPostsModule } from './blog-posts/blog-posts.module';
+import { MediaModule } from './media/media.module';
+import { FormsModule } from './forms/forms.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { BlogPostsModule } from './blog-posts/blog-posts.module';
     SiteDataModule,
     AdminModule,
     CustomersModule,
+    MediaModule,
+    FormsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
