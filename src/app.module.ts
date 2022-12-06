@@ -1,4 +1,8 @@
+import { join } from 'path';
+
 import { Module } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
+
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -13,6 +17,10 @@ import { FormsModule } from './forms/forms.module';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '.', 'public'),
+      serveRoot: '/static',
+    }),
     MongooseModule.forRoot('mongodb://localhost/aka_amir'),
     TicketsModule,
     BlogPostsModule,
