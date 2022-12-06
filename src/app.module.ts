@@ -14,9 +14,14 @@ import { CustomersModule } from './customers/customers.module';
 import { BlogPostsModule } from './blog-posts/blog-posts.module';
 import { MediaModule } from './media/media.module';
 import { FormsModule } from './forms/forms.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '.', 'public'),
       serveRoot: '/static',
