@@ -13,9 +13,19 @@ export class BlogPosts {
   content?: string[];
 
   @Prop({
+    type: String,
+  })
+  title: string;
+
+  @Prop({
     type: Array,
   })
   tags?: string[];
+
+  @Prop({
+    type: String,
+  })
+  summery?: string;
 
   @Prop({
     type: String,

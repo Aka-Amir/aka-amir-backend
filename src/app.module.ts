@@ -20,7 +20,7 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: '.dev.env',
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '.', 'public'),

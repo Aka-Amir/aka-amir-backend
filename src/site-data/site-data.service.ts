@@ -30,7 +30,7 @@ export class SiteDataService {
   }
 
   public async GetByPageId(pageID: string) {
-    return await this.db.findOne({ pageId: pageID }, { __v: 0 }).exec();
+    return await this.db.find({ pageId: pageID }, { __v: 0 }).exec();
   }
 
   public async Update(id: string, updatingData: SiteData) {
