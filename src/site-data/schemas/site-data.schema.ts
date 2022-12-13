@@ -6,7 +6,6 @@ import { TileData } from './tile.data';
 export class SiteData {
   @Prop({
     type: Number,
-    unique: true,
   })
   sectionIndex: number;
 

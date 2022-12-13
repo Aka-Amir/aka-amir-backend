@@ -21,11 +21,16 @@ export class SiteDataController {
   @Post('new')
   @UseGuards(AuthGuard<Admin>)
   public async Create(@Body() data: SiteData) {
-    const response = await this.service.Create(data);
-    return {
-      message: 'created',
-      id: response.id,
-    };
+    try {
+      const response = await this.service.Create(data);
+      return {
+        message: 'created',
+        id: response.id,
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
   }
 
   @Put('update')

@@ -23,10 +23,10 @@ import { ConfigModule } from '@nestjs/config';
       envFilePath: '.dev.env',
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '.', 'public'),
+      rootPath: process.env.FilePath || join(__dirname, '.', 'public'),
       serveRoot: '/static',
     }),
-    MongooseModule.forRoot('mongodb://localhost/aka_amir'),
+    MongooseModule.forRoot('mongodb://127.0.0.1:27017/aka_amir'),
     TicketsModule,
     BlogPostsModule,
     SkillsModule,
