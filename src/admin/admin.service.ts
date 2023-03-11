@@ -24,6 +24,11 @@ export class AdminService {
     return this.model.find({}, { __v: 0 }).exec();
   }
 
+  async HasAdmin(): Promise<boolean> {
+    const response = await this.model.findOne().exec();
+    return !!response;
+  }
+
   async FindById(id: string): Promise<AdminsDocument> {
     return this.model.findById(id, { __v: 0 }).exec();
   }

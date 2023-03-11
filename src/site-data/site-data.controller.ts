@@ -51,7 +51,7 @@ export class SiteDataController {
   @Get('')
   @UseGuards(AuthGuard<Admin>)
   public async GetAll() {
-    return await this.service.GetAll();
+    return await this.service.GetGroupByPageIds();
   }
 
   @Delete(':id')

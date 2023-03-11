@@ -1,10 +1,12 @@
 import {
+  BadRequestException,
   Controller,
   Delete,
   Get,
   NotFoundException,
   Param,
   Post,
+  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -16,11 +18,18 @@ import { MediaService } from './media.service';
 @Controller('media')
 export class MediaController {
   constructor(private _srv: MediaService) {}
+
   @Post('new')
-  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('file'))
-  public async UplodaFile(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
+  @UseGuards(AuthGuard)
+  public async UplodaFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req,
+  ) {
+    console.log(req.headers);
+    console.log(req.body);
+
+    if (!file) throw new BadRequestException();
     const response = await this._srv.WriteFile(file.buffer, file.originalname);
     return {
       message: response,

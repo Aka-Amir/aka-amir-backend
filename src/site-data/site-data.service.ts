@@ -33,6 +33,15 @@ export class SiteDataService {
     return await this.db.find({ pageId: pageID }, { __v: 0 }).exec();
   }
 
+  public async GetGroupByPageIds() {
+    return await this.db
+      .aggregate([
+        { $match: { pageId: { $not: { $regex: /^layout_/ } } } },
+        { $group: { _id: '$pageId', datas: { $push: '$$ROOT' } } },
+      ])
+      .exec();
+  }
+
   public async Update(id: string, updatingData: SiteData) {
     const response = await this.db
       .updateOne(

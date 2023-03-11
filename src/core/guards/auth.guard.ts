@@ -22,13 +22,16 @@ export class AuthGuard<T extends object> implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
+    console.log('start');
     if (process.env.DEV) {
       return true;
     }
+    this.log('Can activate');
     return this.validateRequest(context.switchToHttp().getRequest());
   }
 
   validateRequest(request: any): Observable<boolean> {
+    this.log('validating...');
     return new Observable((subscriber) => {
       const req = request as Request;
       const token = this.hasToken(req.headers);
@@ -36,8 +39,7 @@ export class AuthGuard<T extends object> implements CanActivate {
       this.tokenIsValid(token)
         .then((user) => {
           request.token_data = user;
-          this.log(' Meta data setten ');
-          subscriber.complete();
+          subscriber.next(true);
         })
         .catch((e) => {
           this.log(`${e} ${token}`);

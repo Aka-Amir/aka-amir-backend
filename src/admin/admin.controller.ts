@@ -43,6 +43,7 @@ export class AdminController {
       payload: {
         token,
         refresh,
+        avatarId: 0,
         id,
       },
     };
@@ -51,10 +52,11 @@ export class AdminController {
   @Post('login')
   public async ValidateAdmin(@Body() body: dto.VlidateDto) {
     const user = await this.service.FindByUsername(body.username);
+    if (!user) throw new ForbiddenException();
     const isSame = await this.encryption.Compare(body.password, user.password);
 
     if (!isSame) {
-      throw new ForbiddenException();
+      throw new ForbiddenException('NS');
     }
 
     const payload: Admin = {
@@ -70,6 +72,8 @@ export class AdminController {
       payload: {
         token,
         refresh,
+        avatarId: user.avatarId,
+        id: payload.id,
       },
     };
   }
@@ -98,11 +102,28 @@ export class AdminController {
 
   @Put('update')
   @UseGuards(AuthGuard<Admin>)
-  public async UpdateUser(@Body() body: dto.UpdateAdminDto) {
-    const response = await this.service.UpdateUser(body.id, body.updateFields);
-    return {
-      payload: response,
-    };
+  public async UpdateUser(
+    @Body() body: dto.UpdateAdminDto,
+    @TokenData() admin: Admin,
+  ) {
+    try {
+      if (admin?.id !== body.id) throw new ForbiddenException();
+      if (body.updateFields.password) {
+        body.updateFields.password = await this.encryption.PasswordEncryption(
+          body.updateFields.password,
+        );
+      }
+      const response = await this.service.UpdateUser(
+        body.id,
+        body.updateFields,
+      );
+      return {
+        payload: response,
+      };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
   }
 
   @Get('id/:id')

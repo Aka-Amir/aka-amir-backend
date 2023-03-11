@@ -9,6 +9,10 @@ export class EncryptionService {
   }
 
   public async Compare(hashedData: string, expected: string) {
-    return await crypt.compare(hashedData, expected);
+    try {
+      return await crypt.compare(hashedData, expected);
+    } catch (e) {
+      return false;
+    }
   }
 }

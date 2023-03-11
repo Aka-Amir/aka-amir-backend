@@ -19,6 +19,11 @@ export class Admins {
     default: Date.now,
   })
   dateRegistered: Date;
+  @Prop({
+    type: Number,
+    default: 0,
+  })
+  avatarId: number;
 }
 
 export type AdminsDocument = Admins & Document;
