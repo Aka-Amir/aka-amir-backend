@@ -7,6 +7,7 @@ import {
   SiteData,
   SiteDataDocument,
 } from './schemas/site-data.schema';
+import TileData from './schemas/tile.data';
 
 @Injectable()
 export class SiteDataService {
@@ -21,8 +22,35 @@ export class SiteDataService {
     return await document.save().then(({ _id }) => ({ id: _id })); // filter data
   }
 
+  public async DeleteByPageId(id: string) {
+    return await this.db.deleteMany({ pageId: id }).exec();
+  }
+
   public async Delete(id: string): Promise<SiteDataDocument> {
     return await this.db.findOneAndDelete({ _id: id }, { __v: 0 }).exec();
+  }
+
+  public async DeleteTile(id: string, tileIndex: number) {
+    await this.db
+      .updateOne(
+        { _id: id },
+        {
+          $unset: {
+            [`tiles.${tileIndex}`]: 1,
+          },
+        },
+      )
+      .exec();
+    return await this.db
+      .findOneAndUpdate(
+        { _id: id },
+        {
+          $pull: {
+            [`tiles`]: null,
+          },
+        },
+      )
+      .exec();
   }
 
   public async GetAll() {
@@ -42,6 +70,42 @@ export class SiteDataService {
       .exec();
   }
 
+  public async PushToTile(id: string, tileData: TileData) {
+    const response = await this.db
+      .findOneAndUpdate(
+        {
+          _id: id,
+        },
+        {
+          $push: {
+            tiles: tileData,
+          },
+        },
+      )
+      .exec();
+    return response;
+  }
+
+  public async UpdateTileData(
+    id: string,
+    tileIndex: number,
+    updatingData: TileData,
+  ) {
+    const response = await this.db
+      .findOneAndUpdate(
+        {
+          _id: id,
+        },
+        {
+          $set: {
+            [`tiles.${tileIndex}`]: updatingData,
+          },
+        },
+      )
+      .exec();
+    return response;
+  }
+
   public async Update(id: string, updatingData: SiteData) {
     const response = await this.db
       .updateOne(
@@ -50,6 +114,7 @@ export class SiteDataService {
         },
         {
           $set: updatingData,
+          $inc: { __v: 1 },
         },
       )
       .exec();
