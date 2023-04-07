@@ -15,6 +15,7 @@ import { BlogPostsModule } from './blog-posts/blog-posts.module';
 import { MediaModule } from './media/media.module';
 import { FormsModule } from './forms/forms.module';
 import { ConfigModule } from '@nestjs/config';
+import { LayoutsModule } from './layouts/layouts.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ConfigModule } from '@nestjs/config';
     CustomersModule,
     MediaModule,
     FormsModule,
+    LayoutsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
