@@ -10,6 +10,42 @@ import { MongooseInterceptor } from './core/interceptors/mongoose.interceptor';
 import { EncryptionService } from './core/providers/encryption.service';
 import { LayoutsService } from './layouts/layouts.service';
 
+async function ActivateTheme(layout: LayoutsService) {
+  try {
+    mkdirSync(join(__dirname, '.', 'public'));
+  } catch (e) {
+    // ignore..
+  }
+  if (existsSync('../aka-amir-front/template.config.json')) {
+    const templateConfig = JSON.parse(
+      readFileSync('../aka-amir-front/template.config.json').toString() || '{}',
+    );
+    layout.createMany(templateConfig.layoutData).subscribe({
+      next(response) {
+        Logger.log('Created', 'TemplateContext');
+        console.log(response);
+      },
+      error(e) {
+        Logger.error(e, 'TemplateContext');
+      },
+    });
+  } else {
+    Logger.debug('No template config !');
+  }
+  const cp = exec('cd ../aka-amir-front && npm run template:activate', (e) => {
+    if (e) {
+      console.trace(e);
+      process.exit(1);
+    }
+  });
+  cp.stdout.on('data', (log) => {
+    Logger.log(new String(log).trim(), 'Theme Context');
+  });
+  cp.stderr.on('data', (log) => {
+    Logger.error(new String(log).trim(), 'Theme Context');
+  });
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
@@ -48,54 +84,8 @@ async function bootstrap() {
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new MongooseInterceptor());
-  try {
-    mkdirSync(join(__dirname, '.', 'public'));
-  } catch (e) {
-    // ignore..
-  }
 
-  // if (
-  //   process.argv.includes('--with-template') ||
-  //   process.argv.includes('-wt')
-  // ) {
-
-  // }
-  if (existsSync('../aka-amir-front/template.config.json')) {
-    const templateConfig = JSON.parse(
-      readFileSync('../aka-amir-front/template.config.json').toString() || '{}',
-    );
-    layout.createMany(templateConfig.layoutData).subscribe({
-      next(response) {
-        Logger.log('Created', 'TemplateContext');
-        console.log(response);
-      },
-      error(e) {
-        Logger.error(e, 'TemplateContext');
-      },
-    });
-  } else {
-    Logger.debug('No template config !');
-  }
-  const cp = exec('cd ../aka-amir-front && npm run template:activate', (e) => {
-    if (e) {
-      console.trace(e);
-      process.exit(1);
-    }
-  });
-  cp.stdout.on('data', (log) => {
-    Logger.log(new String(log).trim(), 'Theme Context');
-  });
-  cp.stderr.on('data', (log) => {
-    Logger.error(new String(log).trim(), 'Theme Context');
-  });
-  // setInterval(() => {
-
-  // }, 1000);
-
-  // setTimeout(() => {
-  //   console.log('Killing the template');
-  //   cp.kill('SIGKILL');
-  // }, 10000);
+  // await ActivateTheme(layout);
   await app.listen(port);
 }
 bootstrap();
